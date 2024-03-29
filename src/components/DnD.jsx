@@ -1,55 +1,44 @@
-import { useEffect, useState } from "react";
-import Todo from "./Todo";
-import { useDrop } from "react-dnd";
+/* eslint-disable */
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import Section from "./Section";
+import { Box } from "@mui/material";
 
-const todolist = [
-  {
-    id: 1,
-    url: "https://i.ibb.co/5jQjGfZ/solo-lebelling.webp",
-  },
-  {
-    id: 2,
-    url: "https://i.ibb.co/k2F0mnR/desktop-wallpaper-zanpakuto-bleach-bankai-manga-anime-zangetsu-quincy-tensa-zangetsu-ichigo-kurosaki.jpg",
-  },
-  {
-    id: 3,
-    url: "https://i.ibb.co/h1pnkVx/Radiat-Hossain-Ridoy.jpg",
-  },
-];
+//main Component
 const DnD = () => {
-  const [board, setBoard] = useState([]);
-  useEffect(() => {
-    fetch("/todos.json")
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  }, []);
+  //get All tasks data
+  const todos = useSelector((state) => state?.todosReducer?.todos);
 
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: "div",
-    drop: (item) => addImageToboard(item?.id),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }));
+  //filtering tasks containing status todo
+  const statusTodo = useMemo(() => {
+    return todos.filter((todo) => todo.status === "todo");
+  }, [todos]);
 
-  const addImageToboard = (id) => {
-    const todoList = todolist.filter((todo) => id === todo.id);
-    setBoard((board) => [...board, todoList[0]]);
-    // setBoard(todoList);
-  };
+  //filtering tasks containing status ongoing
+  const statusOngoing = useMemo(() => {
+    return todos.filter((todo) => todo.status === "ongoing");
+  }, [todos]);
+
+  //filtering tasks containing status done
+  const statusDone = useMemo(() => {
+    return todos.filter((todo) => todo.status === "done");
+  }, [todos]);
+
+  //declearing all status in an array
+  const allStatus = ["todo", "ongoing", "done"];
+
   return (
-    <>
-      <div className="flex gap-3 justify-center">
-        {todolist?.map((todo) => (
-          <Todo todo={todo} key={todo?.id} />
-        ))}
-      </div>
-      <div ref={drop} className="border ml-2 w-80 h-[700px]">
-        {board?.map((todo) => (
-          <Todo todo={todo} key={todo?.id} />
-        ))}
-      </div>
-    </>
+    <Box className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8 max-w-7xl xl:mx-auto mx-2">
+      {allStatus.map((status) => (
+        <Section
+          key={status}
+          status={status}
+          statusTodo={statusTodo}
+          statusOngoing={statusOngoing}
+          statusDone={statusDone}
+        />
+      ))}
+    </Box>
   );
 };
 
