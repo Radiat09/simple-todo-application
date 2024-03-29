@@ -29,7 +29,8 @@ const Todo = ({ todo }) => {
   };
 
   return (
-    <Box
+    <div
+      draggable="true"
       ref={drag}
       className={`flex justify-between items-center p-3 px-5 shadow-md cursor-pointer rounded-md ${
         isDragging ? "opacity-30" : "opacity-100"
@@ -39,7 +40,7 @@ const Todo = ({ todo }) => {
       <IconButton onClick={() => handleDeleteTodo(todo.id)} aria-label="delete">
         <DeleteIcon />
       </IconButton>
-    </Box>
+    </div>
   );
 };
 
